@@ -4,6 +4,12 @@
 
 Read the complete [Product Requirements Document (PRD.md)](./PRD.md).
 
+### 📚 Documentation Suite
+- 🏗️ **[System Architecture & Workflow Specification](./docs/ARCHITECTURE.md)**
+- 🔌 **[REST API Specification](./docs/API_SPECIFICATION.md)**
+- 🗄️ **[Database Schema & ER Diagram](./docs/DATABASE_SCHEMA.md)**
+- 🧭 **[Pilot Operations & Demonstration Guide](./docs/PILOT_OPERATIONS_GUIDE.md)**
+
 ---
 
 ## 🏛️ System Architecture
