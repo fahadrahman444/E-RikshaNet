@@ -1,0 +1,15 @@
+{
+  "name": "e-rikshanet",
+  "version": "1.0.0",
+  "description": "Digital platform to register, authorize, monitor, and manage rickshaws and drivers with passenger ride-booking",
+  "private": true,
+  "scripts": {
+    "dev:server": "npm --prefix server run dev",
+    "dev:admin": "npm --prefix web-admin run dev",
+    "dev:mobile": "npm --prefix mobile-app run start",
+    "build:server": "npm --prefix server run build",
+    "build:admin": "npm --prefix web-admin run build",
+    "db:push": "npm --prefix server run prisma:push",
+    "db:seed": "npm --prefix server run prisma:seed"
+  }
+}

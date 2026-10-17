@@ -1,0 +1,228 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String      @id @default(uuid())
+  phone        String      @unique
+  name         String
+  email        String?     @unique
+  passwordHash String
+  role         String      @default("PASSENGER") // Role enum
+  status       String      @default("ACTIVE")    // UserStatus enum
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  driverProfile   DriverProfile?
+  ownedVehicles   Vehicle[]
+  passengerTrips  Trip[]        @relation("PassengerTrips")
+  auditLogs       AuditLog[]
+
+  issuedPermits   Permit[]      @relation("OfficerPermits")
+  issuedCases     ViolationCase[] @relation("OfficerCases")
+  reviewedAppeals ViolationAppeal[] @relation("ReviewerAppeals")
+}
+
+model DriverProfile {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  nidNumber        String   @unique
+  licenseNumber    String?
+  emergencyContact String?
+  status           String   @default("SUBMITTED") // RegistrationStatus
+  reviewNotes      String?
+  
+  isOnDuty         Boolean  @default(false)
+  lastLatitude     Float?
+  lastLongitude    Float?
+  lastPingAt       DateTime?
+  currentVehicleId String?
+
+  driverVehicleLinks DriverVehicleLink[]
+  permits            Permit[]
+  trips              Trip[]           @relation("DriverTrips")
+  locationReports    LocationReport[]
+  violationCases     ViolationCase[]
+  appeals            ViolationAppeal[]
+
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Vehicle {
+  id                 String   @id @default(uuid())
+  registrationNumber String   @unique
+  chassisNumber      String   @unique
+  model              String
+  batteryCapacityKwh Float?
+  ownerId            String
+  owner              User     @relation(fields: [ownerId], references: [id])
+  status             String   @default("SUBMITTED") // RegistrationStatus
+  reviewNotes        String?
+
+  driverLinks        DriverVehicleLink[]
+  permits            Permit[]
+  trips              Trip[]
+  locationReports    LocationReport[]
+  violationCases     ViolationCase[]
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model DriverVehicleLink {
+  id        String        @id @default(uuid())
+  driverId  String
+  driver    DriverProfile @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  vehicleId String
+  vehicle   Vehicle       @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  isPrimary Boolean       @default(false)
+  createdAt DateTime      @default(now())
+
+  @@unique([driverId, vehicleId])
+}
+
+model OperatingZone {
+  id                   String          @id @default(uuid())
+  name                 String
+  city                 String          @default("Dhaka")
+  wardNumber           String
+  polygonGeoJson       String          // GeoJSON polygon of allowed ward boundaries
+  speedLimitKmh        Float           @default(25.0)
+  maxPermittedVehicles Int             @default(500)
+  isActive             Boolean         @default(true)
+  
+  permits              Permit[]
+  violationCases       ViolationCase[]
+  trips                Trip[]
+
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @updatedAt
+}
+
+model Permit {
+  id              String       @id @default(uuid())
+  permitNumber    String       @unique
+  driverId        String
+  driver          DriverProfile @relation(fields: [driverId], references: [id])
+  vehicleId       String
+  vehicle         Vehicle       @relation(fields: [vehicleId], references: [id])
+  zoneId          String
+  zone            OperatingZone @relation(fields: [zoneId], references: [id])
+  status          String       @default("PENDING") // PermitStatus
+  effectiveDate   DateTime?
+  expiryDate      DateTime?
+  issuedById      String?
+  issuedBy        User?         @relation("OfficerPermits", fields: [issuedById], references: [id])
+  decisionNotes   String?
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model LocationReport {
+  id               String        @id @default(uuid())
+  driverId         String
+  driver           DriverProfile @relation(fields: [driverId], references: [id], onDelete: Cascade)
+  vehicleId        String?
+  vehicle          Vehicle?      @relation(fields: [vehicleId], references: [id])
+  latitude         Float
+  longitude        Float
+  accuracyMeters   Float?
+  speedKmh         Float?
+  heading          Float?
+  isInsideZone     Boolean       @default(true)
+  recordedAt       DateTime
+  serverReceivedAt DateTime      @default(now())
+
+  @@index([driverId, recordedAt])
+}
+
+model ViolationCase {
+  id           String            @id @default(uuid())
+  caseNumber   String            @unique
+  driverId     String
+  driver       DriverProfile     @relation(fields: [driverId], references: [id])
+  vehicleId    String?
+  vehicle      Vehicle?          @relation(fields: [vehicleId], references: [id])
+  zoneId       String?
+  zone         OperatingZone?    @relation(fields: [zoneId], references: [id])
+  category     String            // ViolationCategory
+  evidenceJson String            // GPS coordinates, boundary context, timestamp
+  status       String            @default("CANDIDATE_REVIEW") // ViolationStatus
+  officerNotes String?
+  penaltyAmount Float?           @default(0.0)
+  issuedById   String?
+  issuedBy     User?             @relation("OfficerCases", fields: [issuedById], references: [id])
+
+  appeals      ViolationAppeal[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+}
+
+model ViolationAppeal {
+  id            String        @id @default(uuid())
+  caseId        String
+  case          ViolationCase @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  driverId      String
+  driver        DriverProfile @relation(fields: [driverId], references: [id])
+  reason        String
+  evidenceJson  String?
+  status        String        @default("PENDING") // AppealStatus
+  reviewerId    String?
+  reviewer      User?         @relation("ReviewerAppeals", fields: [reviewerId], references: [id])
+  reviewerNotes String?
+
+  createdAt     DateTime      @default(now())
+  resolvedAt    DateTime?
+}
+
+model Trip {
+  id                 String     @id @default(uuid())
+  tripNumber         String     @unique
+  passengerId        String
+  passenger          User       @relation("PassengerTrips", fields: [passengerId], references: [id])
+  driverId           String?
+  driver             DriverProfile? @relation("DriverTrips", fields: [driverId], references: [id])
+  vehicleId          String?
+  vehicle            Vehicle?   @relation(fields: [vehicleId], references: [id])
+  zoneId             String
+  zone               OperatingZone @relation(fields: [zoneId], references: [id])
+  
+  pickupLat          Float
+  pickupLng          Float
+  pickupAddress      String
+  dropoffLat         Float
+  dropoffLng         Float
+  dropoffAddress     String
+  
+  estimatedFare      Float
+  finalFare          Float?
+  status             String     @default("REQUESTED") // TripStatus
+  cancellationReason String?
+  cancelledBy        String?
+  
+  startedAt          DateTime?
+  completedAt        DateTime?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  userRole   String?
+  action     String   // e.g. "PERMIT_APPROVED", "STATUS_CHANGE", "ZONE_CREATED"
+  entityType String   // "Permit", "ViolationCase", "Vehicle", etc.
+  entityId   String
+  details    String   // JSON string of changes
+  ipAddress  String?
+  createdAt  DateTime @default(now())
+}
