@@ -44,7 +44,8 @@ export const LiveMap: React.FC = () => {
     fetchData();
 
     // Connect to Socket.io for live coordinates
-    const socket = io("http://localhost:5000");
+    const socketHost = typeof window !== "undefined" ? window.location.hostname : "localhost";
+    const socket = io(`http://${socketHost}:5000`);
     socket.emit("join:authority");
 
     socket.on("tracking:update", (update: any) => {

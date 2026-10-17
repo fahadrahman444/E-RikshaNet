@@ -1,4 +1,5 @@
-const API_BASE = "http://localhost:5000/api";
+const host = typeof window !== "undefined" ? window.location.hostname : "localhost";
+const API_BASE = `http://${host}:5000/api`;
 
 export function getAuthToken(): string | null {
   return localStorage.getItem("erikshanet_token");
