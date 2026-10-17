@@ -9,7 +9,7 @@ import {
   TextInput,
   Alert,
 } from "react-native";
-import { mobileApi } from "../api/client.js";
+import { mobileApi } from "../api/client";
 
 export const DriverScreen: React.FC = () => {
   const [driverProfile, setDriverProfile] = useState<any>(null);

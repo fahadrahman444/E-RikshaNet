@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, StatusBar } from "react-native";
-import { DriverScreen } from "./src/screens/DriverScreen.js";
-import { PassengerScreen } from "./src/screens/PassengerScreen.js";
-import { mobileApi, setToken } from "./src/api/client.js";
+import { DriverScreen } from "./src/screens/DriverScreen";
+import { PassengerScreen } from "./src/screens/PassengerScreen";
+import { mobileApi, setToken } from "./src/api/client";
 
 export default function App() {
   const [currentMode, setCurrentMode] = useState<"driver" | "passenger">("driver");

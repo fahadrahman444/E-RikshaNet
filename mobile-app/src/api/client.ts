@@ -1,6 +1,6 @@
 // Mobile API Client for E-RikshaNet
-// Uses localhost or IP address (e.g. 10.0.2.2 for Android emulator or localhost for web/iOS)
-export const API_BASE = "http://localhost:5000/api";
+const host = typeof window !== "undefined" && window.location?.hostname ? window.location.hostname : "192.168.1.101";
+export const API_BASE = `http://${host}:5000/api`;
 
 let authToken: string | null = null;
 

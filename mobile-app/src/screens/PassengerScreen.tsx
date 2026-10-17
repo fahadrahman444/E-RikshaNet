@@ -7,7 +7,7 @@ import {
   ScrollView,
   Alert,
 } from "react-native";
-import { mobileApi } from "../api/client.js";
+import { mobileApi } from "../api/client";
 
 export const PassengerScreen: React.FC = () => {
   const [zones, setZones] = useState<any[]>([]);
