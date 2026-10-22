@@ -144,16 +144,22 @@ flowchart LR
   - *Violations & Appeals*: Dual-tier human adjudication system (Enforcement Officer vs. Appeals Reviewer).
   - *Audit Trail*: Searchable regulatory ledger.
 
-### 3.3 Mobile Application (`mobile-app/`)
-- **Framework**: React Native with Expo SDK 51 and TypeScript.
-- **Cross-Platform Support**: Android, iOS, and Mobile Web.
-- **Driver Module**:
-  - Operating eligibility gating on duty switch.
-  - Automatic 8-second background telemetry loop.
-  - Dedicated "Simulate Boundary Breach" testing mechanism.
-  - Ride acceptance and trip state stepper.
-  - Legal appeal filing interface.
-- **Passenger Module**:
-  - Geofence-constrained pickup/dropoff selector.
-  - Transparent fare estimation preview.
-  - Live assigned driver and rickshaw plate number verification card.
+### 3.3 Standalone Mobile Applications
+
+The mobile tier is split into two dedicated, role-specific applications sharing the central REST and WebSocket backend:
+
+#### 🛺 E-RikshaNet Driver Partner (`mobile-driver/` - Port 8081)
+- **Framework**: React Native with Expo SDK 51 and TypeScript (`com.erikshanet.driver`).
+- **Full-Screen Street Navigation Map**: Embedded CartoDB Voyager street tile map rendering road vectors, driver location, and pickup target markers.
+- **Operating Eligibility Gating**: Server validates active operating permit before allowing transition to `ONLINE`.
+- **Hardware Telemetry Loop**: Automatic 8-second GPS telemetry loop (`expo-location`) broadcasting coordinates and speed to `/api/tracking/ping`.
+- **Instant Dispatch Offer Drawer**: Real-time Socket.io push (`trip:new_request` on `zone:${zoneId}`) displaying upfront fare, pickup distance, and rider details.
+- **Trip Execution HUD**: Turn-by-turn guidance header and progressive status progression (`ARRIVING` ➔ `IN_PROGRESS` ➔ `COMPLETED`).
+- **Due-Process Appeals Interface**: File statements of defense against enforcement citations directly to the Appeals Reviewer.
+
+#### 👤 E-RikshaNet Rider (`mobile-passenger/` - Port 8082)
+- **Framework**: React Native with Expo SDK 51 and TypeScript (`com.erikshanet.passenger`).
+- **Full-Screen Route Map**: Dynamic street map with pickup pin 🟢, destination pin 🏁, route line, and nearby active rickshaws.
+- **Minimalist Transit Booking**: Fast destination chips (*Mirpur-10, Mirpur-11, Sec-7 Center, Pallabi Mkt*).
+- **Deterministic Fare Formula (BR-12)**: Upfront calculation (Base 25 BDT + 15 BDT/km) previewed prior to booking.
+- **Real-Time Driver Matching**: Sockets listen on `passenger:${id}` and `trip:${id}` to display assigned driver name, rating (★ 4.9), phone, and vehicle registration number without polling.

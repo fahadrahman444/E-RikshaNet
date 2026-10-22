@@ -1,0 +1,37 @@
+{
+  "expo": {
+    "name": "E-RikshaNet Driver",
+    "slug": "erikshanet-driver",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#16a34a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.erikshanet.driver",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "E-RikshaNet Driver needs your location to transmit ward telemetry and receive nearby dispatch rides.",
+        "NSLocationAlwaysAndWhenInUseUsageDescription": "E-RikshaNet Driver tracks your route continuously while on-duty to ensure zone compliance."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#16a34a"
+      },
+      "package": "com.erikshanet.driver",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_BACKGROUND_LOCATION",
+        "FOREGROUND_SERVICE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}

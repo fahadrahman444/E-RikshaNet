@@ -33,10 +33,17 @@ E-RikshaNet/
 │       ├── pages/Registrations.tsx  # Driver NID & vehicle verification
 │       ├── pages/Violations.tsx     # Candidate geofence breach review & legal appeals
 │       └── pages/AuditLogs.tsx      # Immutable append-only regulatory audit trail
-└── mobile-app/           # React Native (Expo) Mobile App for Drivers & Passengers
-    └── src/
-        ├── screens/DriverScreen.tsx    # On-duty switch, GPS telemetry simulator, ride accept, appeal
-        └── screens/PassengerScreen.tsx # Ward pickup/dropoff selector, fare estimator, live tracking
+├── mobile-driver/        # E-RikshaNet Driver Partner App (React Native / Expo - Port 8081)
+│   └── src/
+│       ├── components/StreetTileMap.tsx # Full-screen CartoDB street navigation map
+│       ├── screens/DriverScreen.tsx     # Duty cockpit, GPS telemetry, real-time dispatch, appeal
+│       └── screens/LoginScreen.tsx      # Phone auth & token persistence
+├── mobile-passenger/     # E-RikshaNet Rider App (React Native / Expo - Port 8082)
+│   └── src/
+│       ├── components/StreetTileMap.tsx # Full-screen CartoDB street route map
+│       ├── screens/PassengerScreen.tsx  # Interactive route chips, fare preview, live matching
+│       └── screens/LoginScreen.tsx      # Commuter phone auth & token persistence
+└── mobile-app/           # (Legacy / Combined Pilot Prototype)
 ```
 
 ---
@@ -71,13 +78,24 @@ npm run dev
 # Dashboard running on http://localhost:3000
 ```
 
-### 5. Run the Mobile App (Driver & Passenger)
+### 5. Run the Mobile Apps
+
+You can run both apps independently on Android, iOS, or Web:
+
+#### 🛺 Driver Partner App (`mobile-driver/`)
 In a new terminal:
 ```bash
-cd mobile-app
-npm install
-npm run start
-# Supports Expo Go, Web, Android Emulator, and iOS Simulator
+npm run dev:driver
+# Or inside folder: cd mobile-driver && npm start (Port 8081)
+# Open in browser: press 'w' (http://localhost:8081)
+```
+
+#### 👤 Rider / Commuter App (`mobile-passenger/`)
+In a new terminal:
+```bash
+npm run dev:passenger
+# Or inside folder: cd mobile-passenger && npm start (Port 8082)
+# Open in browser: press 'w' (http://localhost:8082)
 ```
 
 ---

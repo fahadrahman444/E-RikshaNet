@@ -52,14 +52,14 @@ This step-by-step test script allows municipal stakeholders to evaluate the 10 P
    - Enter legal ruling notes. The violation status updates to **DISMISSED** and penalty is cleared.
 
 ### Step 6: Passenger Ride Booking & Ward Constrained Matching (PRD FR-24 - FR-29)
-1. In the Mobile App, switch to **"👤 Passenger Mode"**.
-2. Select pickup (*Mirpur-10 Roundabout*) and destination (*Mirpur-11 Bus Stand*).
-3. Verify the calculated fare: Base 25 BDT + 15 BDT/km.
-4. Tap **"Confirm & Request Rickshaw"**.
-5. Switch to **"🛺 Driver Mode"**:
-   - The incoming ride offer appears in the driver dispatch queue.
+1. In the **Rider App** (`http://localhost:8082`), sign in as passenger *Sharmin Sultana* (`01700000008`).
+2. Pick destination (*Mirpur-11*) from the destination chips.
+3. Verify the calculated fare: Base 25 BDT + 15 BDT/km (e.g., `৳40`).
+4. Tap **"Request E-Riksha"**.
+5. In the **Driver Partner App** (`http://localhost:8081`), sign in as driver *Md. Rafiqul Islam* (`01700000007`) and toggle **"GO ONLINE"**:
+   - The incoming ride offer slides up with upfront fare and route details.
    - Tap **"Accept Ride"**.
-   - Step through the trip states: *Arrived at Pickup* ➔ *Start Ride* ➔ *Complete Trip & Collect Fare*.
+   - Step through the real-time trip states: *Arrived at Pickup* ➔ *Start Ride* ➔ *Complete Trip & Collect Fare*. Notice the Rider App updates in real time over WebSockets!
 
 ### Step 7: Regulatory Audit Trail Verification (PRD BR-09, BR-11)
 1. In the Authority Dashboard, switch to **"Admin"** role.

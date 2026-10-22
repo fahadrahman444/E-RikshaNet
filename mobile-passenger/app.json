@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "E-RikshaNet Rider",
+    "slug": "erikshanet-passenger",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0284c7"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.erikshanet.passenger",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "E-RikshaNet Rider uses your location to set accurate pickup points for local rickshaws."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0284c7"
+      },
+      "package": "com.erikshanet.passenger",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
